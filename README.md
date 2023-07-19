@@ -63,11 +63,26 @@ table:
 
 This is a class method that should:
 
-- Create a new `Review` class instance using the parameter values.
-- Save the new `Review` class instance to the "reviews" table.
-- Return the new `Review` class instance.
+- Create a new `Review` instance using the parameter values.
+- Save the new `Review` instance to the "reviews" table.
+- Return the new `Review` instance.
 
 Think about how you can re-use the `save()` method to help with this one.
+
+### `instance_from_db()`
+
+This class method should return a `Review` instance having the attribute values
+from the table row. You should check the dictionary for an existing instance
+using the row's primary key, and set the instance attributes to the row data if
+found. If the dictionary does not contain a previously persisted object with
+that id, create a new `Review` instance from the row data and add it to the
+dictionary. The method should return the cached object.
+
+### `find_by_id()`
+
+This class method takes in an `id` as a parameter, and should return a single
+`Review` instance corresponding to the row in the "reviews" table with that same
+id, or `None` is no such row exists in the table.
 
 ### `update()`
 
@@ -79,25 +94,10 @@ columns for a "reviews" table row based on the `id` of the current object.
 This instance method should delete a "reviews" table row based on the `id` of
 the current object.
 
-### `instance_from_db()`
-
-This class method should return a `Review` class instance having the attribute
-values from the table row. You should check the dictionary for existing class
-instance using the row's primary key and set the instance attributes to the row
-data if found. If the dictionary does not contain a previously persisted object
-with that id, create a new class instance from the row data and add it to the
-dictionary. The method should return the cached object.
-
 ### `get_all()`
 
 This class method should return a list of `Review` instances for every row in
 the "reviews" table.
-
-### `find_by_id()`
-
-This class method takes in an `id` as a parameter, and should return a single
-`Review` class instance for the corresponding row in the "reviews" table with
-that same id, or `None` is no such row exists in the table.
 
 You can test your methods by running the tests in the
 "lib/testing/review_orm_test.py" file:
@@ -106,12 +106,11 @@ You can test your methods by running the tests in the
 pytest lib/testing/review_orm_test.py
 ```
 
-You can also experiment using the `lib/debug.py` file:
+You can also experiment by running `python lib/debug.py` and calling the new ORM
+methods at the `ipbd>` prompt:
 
 ```bash
 ipdb> Review.get_all()
-
-ipdb>
 ```
 
 ### `Review` Properties
@@ -138,7 +137,7 @@ Update the `Employee` class with a new method `reviews()` for getting associated
 ### `reviews()`
 
 This instance method should query the "reviews" table to get all rows where the
-foreign key column `employee_id` matches the id of the current `Employee` class
+foreign key column `employee_id` matches the id of the current `Employee`
 instance. The method should return a list of `Review` objects for each matching
 table row.
 
@@ -160,7 +159,7 @@ Check to make sure all tests pass:
 pytest -x
 ```
 
-Once all of your tests are passing, commit and push your work using `git` to
-submit.
+Once all of your tests pass, commit and push your work using `git` to submit
+your solution.
 
 ---

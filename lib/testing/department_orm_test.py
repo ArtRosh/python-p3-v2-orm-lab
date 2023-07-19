@@ -70,6 +70,66 @@ class TestDepartment:
                 (department.id, department.name, department.location) ==
                 (row[0], "Payroll", "Building A, 5th Floor"))
 
+    def test_instance_from_db(self):
+        '''contains method "instance_from_db()" that takes a table row and returns a Department instance.'''
+
+        Department.create_table()
+        Department.create("Payroll", "Building A, 5th Floor")
+
+        sql = """
+            SELECT * FROM departments
+        """
+        row = CURSOR.execute(sql).fetchone()
+        department = Department.instance_from_db(row)
+
+        assert ((row[0], row[1], row[2]) ==
+                (department.id, department.name, department.location) ==
+                (row[0], "Payroll", "Building A, 5th Floor"))
+
+    def test_finds_by_id(self):
+        '''contains method "find_by_id()" that returns a Department instance corresponding to the db row retrieved by id.'''
+
+        Department.create_table()
+        department1 = Department.create(
+            "Human Resources", "Building C, East Wing")
+        department2 = Department.create("Marketing", "Building B, 3rd Floor")
+
+        department = Department.find_by_id(department1.id)
+        assert (
+            (department.id, department.name, department.location) ==
+            (department1.id, "Human Resources", "Building C, East Wing")
+        )
+        department = Department.find_by_id(department2.id)
+        assert (
+            (department.id, department.name, department.location) ==
+            (department2.id, "Marketing", "Building B, 3rd Floor")
+        )
+        department = Department.find_by_id(0)
+        assert (department is None)
+
+    def test_finds_by_name(self):
+        '''contains method "find_by_name()" that returns a Department instance corresponding to the db row retrieved by name.'''
+
+        Department.create_table()
+        department1 = Department.create(
+            "Human Resources", "Building C, East Wing")
+        department2 = Department.create("Marketing", "Building B, 3rd Floor")
+
+        department = Department.find_by_name("Human Resources")
+        assert (
+            (department.id, department.name, department.location) ==
+            (department1.id, "Human Resources", "Building C, East Wing")
+        )
+
+        department = Department.find_by_name("Marketing")
+        assert (
+            (department.id, department.name, department.location) ==
+            (department2.id, "Marketing", "Building B, 3rd Floor")
+        )
+        department = Department.find_by_name("Unknown")
+        assert (department is None)
+
+
     def test_updates_row(self):
         '''contains a method "update()" that updates an instance's corresponding db row to match its new attribute values.'''
         Department.create_table()
@@ -125,22 +185,7 @@ class TestDepartment:
         assert ((id2, "Sales and Marketing", "Building B, 4th Floor")
                 == (department2.id, department2.name, department2.location))
 
-    def test_instance_from_db(self):
-        '''contains method "instance_from_db()" that takes a table row and returns a Department instance.'''
-
-        Department.create_table()
-        Department.create("Payroll", "Building A, 5th Floor")
-
-        sql = """
-            SELECT * FROM departments
-        """
-        row = CURSOR.execute(sql).fetchone()
-        department = Department.instance_from_db(row)
-
-        assert ((row[0], row[1], row[2]) ==
-                (department.id, department.name, department.location) ==
-                (row[0], "Payroll", "Building A, 5th Floor"))
-
+    
     def test_gets_all(self):
         '''contains method "get_all()" that returns a list of Department instances for every row in the db.'''
 
@@ -160,49 +205,7 @@ class TestDepartment:
                 (department2.id, "Marketing", "Building B, 3rd Floor")
                 )
 
-    def test_finds_by_id(self):
-        '''contains method "find_by_id()" that returns a Department instance corresponding to the db row retrieved by id.'''
-
-        Department.create_table()
-        department1 = Department.create(
-            "Human Resources", "Building C, East Wing")
-        department2 = Department.create("Marketing", "Building B, 3rd Floor")
-
-        department = Department.find_by_id(department1.id)
-        assert (
-            (department.id, department.name, department.location) ==
-            (department1.id, "Human Resources", "Building C, East Wing")
-        )
-        department = Department.find_by_id(department2.id)
-        assert (
-            (department.id, department.name, department.location) ==
-            (department2.id, "Marketing", "Building B, 3rd Floor")
-        )
-        department = Department.find_by_id(0)
-        assert (department is None)
-
-    def test_finds_by_name(self):
-        '''contains method "find_by_name()" that returns a Department instance corresponding to the db row retrieved by name.'''
-
-        Department.create_table()
-        department1 = Department.create(
-            "Human Resources", "Building C, East Wing")
-        department2 = Department.create("Marketing", "Building B, 3rd Floor")
-
-        department = Department.find_by_name("Human Resources")
-        assert (
-            (department.id, department.name, department.location) ==
-            (department1.id, "Human Resources", "Building C, East Wing")
-        )
-
-        department = Department.find_by_name("Marketing")
-        assert (
-            (department.id, department.name, department.location) ==
-            (department2.id, "Marketing", "Building B, 3rd Floor")
-        )
-        department = Department.find_by_name("Unknown")
-        assert (department is None)
-
+    
     def test_get_employees(self):
         '''contain a method "employees" that gets the employees for the current Department instance '''
 

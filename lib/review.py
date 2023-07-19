@@ -5,7 +5,7 @@ from employee import Employee
 
 class Review:
 
-    # Dictionary for mapping a table row to a persisted class instance.
+    # Dictionary of objects saved to the database.
     all = {}
 
     def __init__(self, year, summary, employee_id, id=None):
@@ -20,46 +20,10 @@ class Review:
             + f"Employee: {self.employee_id}>"
         )
 
-    @property
-    def year(self):
-        return self._year
-
-    @year.setter
-    def year(self, year):
-        if isinstance(year, int) and year >= 2000:
-            self._year = year
-        else:
-            raise ValueError(
-                "year must be an integer >= 2000"
-            )
-
-    @property
-    def summary(self):
-        return self._summary
-
-    @summary.setter
-    def summary(self, summary):
-        if isinstance(summary, str) and len(summary) > 0:
-            self._summary = summary
-        else:
-            raise ValueError(
-                "summary must be a non-empty string"
-            )
-
-    @property
-    def employee_id(self):
-        return self._employee_id
-
-    @employee_id.setter
-    def employee_id(self, employee_id):
-        if Employee.find_by_id(employee_id):
-            self._employee_id = employee_id
-        else:
-            raise ValueError(
-                "employee_id must reference an employee in the database")
 
     @classmethod
     def create_table(cls):
+        """ Create a new table to persist the attributes of Review instances """
         sql = """
             CREATE TABLE IF NOT EXISTS reviews (
             id INTEGER PRIMARY KEY,
@@ -73,7 +37,7 @@ class Review:
 
     @classmethod
     def drop_table(cls):
-        """ Drop the table that persists Review class instances """
+        """ Drop the table that persists Review  instances """
         sql = """
             DROP TABLE IF EXISTS reviews;
         """
@@ -88,7 +52,19 @@ class Review:
 
     @classmethod
     def create(cls, year, summary, employee_id):
-        """ Initialize a new Review object and save the object to the database """
+        """ Initialize a new Review instance and save the object to the database """
+        pass
+    
+    @classmethod
+    def instance_from_db(cls, row):
+        """Return an Review object having the attribute values from the table row."""
+        # Check the dictionary for  existing instance using the row's primary key
+        pass
+    
+
+    @classmethod
+    def find_by_id(cls, id):
+        """Return a Review object having the attribute values from the table row."""
         pass
 
     def update(self):
@@ -100,16 +76,6 @@ class Review:
         pass
 
     @classmethod
-    def instance_from_db(cls, row):
-        """Return an Review object having the attribute values from the table row."""
-        pass
-
-    @classmethod
     def get_all(cls):
         """Return a list containing one Review object per table row"""
-        pass
-
-    @classmethod
-    def find_by_id(cls, id):
-        """Return Review object corresponding to the table row matching the specified primary key"""
         pass
