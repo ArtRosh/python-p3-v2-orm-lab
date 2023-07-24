@@ -5,7 +5,7 @@ import pytest
 
 
 class TestReview:
-    '''Class Employee in employee.py'''
+    '''Class Review in review.py'''
 
     @pytest.fixture(autouse=True)
     def drop_tables(self):
@@ -118,6 +118,58 @@ class TestReview:
                 (review.id, review.year, review.summary, review.employee_id) ==
                 (review.id, 2023, "Excellent Python skills!", employee.id))
 
+    def test_instance_from_db(self):
+        '''contains method "instance_from_db()" that takes a db row and creates an Review instance.'''
+
+        Department.create_table()
+        department = Department.create("Payroll", "Building A, 5th Floor")
+
+        Employee.create_table()
+        employee = Employee.create("Raha", "Accountant", department.id)
+
+        Review.create_table()
+        sql = """
+            INSERT INTO reviews (year, summary, employee_id)
+            VALUES (2022, 'Amazing coder!', ?)
+        """
+        CURSOR.execute(sql, (employee.id,))
+
+        sql = """
+            SELECT * FROM reviews
+        """
+        row = CURSOR.execute(sql).fetchone()
+
+        review = Review.instance_from_db(row)
+        assert ((row[0], row[1], row[2], row[3]) ==
+                (review.id, review.year, review.summary, review.employee_id) ==
+                (review.id, 2022, "Amazing coder!", employee.id))
+
+    def test_finds_by_id(self):
+        '''contains method "find_by_id()" that returns a Review instance corresponding to its db row retrieved by id.'''
+
+        Department.create_table()
+        department = Department.create("Payroll", "Building A, 5th Floor")
+
+        Employee.create_table()
+        employee = Employee.create("Raha", "Accountant", department.id)
+
+        Review.create_table()
+        review1 = Review.create(2020, "Great coder!", employee.id)
+        id1 = review1.id
+        review2 = Review.create(2000, "Awesome coder!", employee.id)
+        id2 = review2.id
+
+        review = Review.find_by_id(review1.id)
+        assert ((review.id, review.year, review.summary, review.employee_id) ==
+                (id1, 2020, "Great coder!", employee.id))
+
+        review = Review.find_by_id(review2.id)
+        assert ((review.id, review.year, review.summary, review.employee_id) ==
+                (id2, 2000, "Awesome coder!", employee.id))
+
+        review = Review.find_by_id(3)
+        assert (review is None)
+
     def test_updates_row(self):
         '''contains a method "update()" that updates an instance's corresponding database record to match its new attribute values.'''
 
@@ -178,32 +230,7 @@ class TestReview:
                 (review2.id, review2.year, review2.summary, review2.employee_id) ==
                 (id2, 2000, "Takes long lunches", employee.id))
 
-    def test_instance_from_db(self):
-        '''contains method "instance_from_db()" that takes a db row and creates an Review instance.'''
-
-        Department.create_table()
-        department = Department.create("Payroll", "Building A, 5th Floor")
-
-        Employee.create_table()
-        employee = Employee.create("Raha", "Accountant", department.id)
-
-        Review.create_table()
-        sql = """
-            INSERT INTO reviews (year, summary, employee_id)
-            VALUES (2022, 'Amazing coder!', ?)
-        """
-        CURSOR.execute(sql, (employee.id,))
-
-        sql = """
-            SELECT * FROM reviews
-        """
-        row = CURSOR.execute(sql).fetchone()
-
-        review = Review.instance_from_db(row)
-        assert ((row[0], row[1], row[2], row[3]) ==
-                (review.id, review.year, review.summary, review.employee_id) ==
-                (review.id, 2022, "Amazing coder!", employee.id))
-
+    
     def test_gets_all(self):
         '''contains method "get_all()" that returns a list of Review instances for every record in the db.'''
 
@@ -226,28 +253,4 @@ class TestReview:
         assert ((reviews[1].id, reviews[1].year, reviews[1].summary, reviews[1].employee_id) ==
                 (review2.id, review2.year, review2.summary, review2.employee_id))
 
-    def test_finds_by_id(self):
-        '''contains method "find_by_id()" that returns a Review instance corresponding to its db row retrieved by id.'''
-
-        Department.create_table()
-        department = Department.create("Payroll", "Building A, 5th Floor")
-
-        Employee.create_table()
-        employee = Employee.create("Raha", "Accountant", department.id)
-
-        Review.create_table()
-        review1 = Review.create(2020, "Great coder!", employee.id)
-        id1 = review1.id
-        review2 = Review.create(2000, "Awesome coder!", employee.id)
-        id2 = review2.id
-
-        review = Review.find_by_id(review1.id)
-        assert ((review.id, review.year, review.summary, review.employee_id) ==
-                (id1, 2020, "Great coder!", employee.id))
-
-        review = Review.find_by_id(review2.id)
-        assert ((review.id, review.year, review.summary, review.employee_id) ==
-                (id2, 2000, "Awesome coder!", employee.id))
-
-        review = Review.find_by_id(3)
-        assert (review is None)
+ 
