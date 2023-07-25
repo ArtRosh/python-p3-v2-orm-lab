@@ -72,7 +72,8 @@ class Review:
         pass
 
     def delete(self):
-        """Delete the row corresponding to the current Review object"""
+        """Delete the row corresponding to the current Review object and remove 
+        the object from dictionary"""
         pass
 
     @classmethod
