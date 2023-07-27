@@ -50,7 +50,7 @@ class Employee:
 
     @department_id.setter
     def department_id(self, department_id):
-        if Department.find_by_id(department_id):
+        if type(department_id) is int and Department.find_by_id(department_id):
             self._department_id = department_id
         else:
             raise ValueError(
@@ -92,7 +92,7 @@ class Employee:
         CONN.commit()
 
         self.id = CURSOR.lastrowid
-        Employee.all[self.id] = self
+        type(self).all[self.id] = self
 
     def update(self):
         """Update the table row corresponding to the current Employee instance."""
@@ -102,7 +102,7 @@ class Employee:
             WHERE id = ?
         """
         CURSOR.execute(sql, (self.name, self.job_title,
-                             self.department_id, self.id))
+                            self.department_id, self.id))
         CONN.commit()
 
     def delete(self):
@@ -114,11 +114,13 @@ class Employee:
 
         CURSOR.execute(sql, (self.id,))
         CONN.commit()
+        # remove object from local dictionary
+        del type(self).all[self.id]
 
     @classmethod
     def create(cls, name, job_title, department_id):
         """ Initialize a new Employee instance and save the object to the database """
-        employee = Employee(name, job_title, department_id)
+        employee = cls(name, job_title, department_id)
         employee.save()
         return employee
 
@@ -127,7 +129,7 @@ class Employee:
         """Return an Employee object having the attribute values from the table row."""
 
         # Check the dictionary for  existing instance using the row's primary key
-        employee = Employee.all.get(row[0])
+        employee = cls.all.get(row[0])
         if employee:
             # ensure attributes match row values in case local instance was modified
             employee.name = row[1]
@@ -137,7 +139,7 @@ class Employee:
         else:
             employee = cls(row[1], row[2], row[3])
             employee.id = row[0]
-            Employee.all[employee.id] = employee
+            cls.all[employee.id] = employee
         return employee
 
     @classmethod
