@@ -20,7 +20,6 @@ class Review:
             + f"Employee: {self.employee_id}>"
         )
 
-
     @classmethod
     def create_table(cls):
         """ Create a new table to persist the attributes of Review instances """
@@ -52,31 +51,32 @@ class Review:
 
     @classmethod
     def create(cls, year, summary, employee_id):
-        """ Initialize a new Review instance and save the object to the database """
+        """ Initialize a new Review instance and save the object to the database. Return the new instance. """
         pass
-    
+   
     @classmethod
     def instance_from_db(cls, row):
-        """Return an Review object having the attribute values from the table row."""
+        """Return an Review instance having the attribute values from the table row."""
         # Check the dictionary for  existing instance using the row's primary key
         pass
-    
+   
 
     @classmethod
     def find_by_id(cls, id):
-        """Return a Review object having the attribute values from the table row."""
+        """Return a Review instance having the attribute values from the table row."""
         pass
 
     def update(self):
-        """Update the table row corresponding to the current Review object."""
+        """Update the table row corresponding to the current Review instance."""
         pass
 
     def delete(self):
-        """Delete the row corresponding to the current Review object and remove 
-        the object from dictionary"""
+        """Delete the table row corresponding to the current Review instance,
+        delete the dictionary entry, and reassign id attribute"""
         pass
 
     @classmethod
     def get_all(cls):
-        """Return a list containing one Review object per table row"""
+        """Return a list containing one Review instance per table row"""
         pass
+

@@ -55,9 +55,9 @@ The instance method `save()` should persist the `Review` object to the "reviews"
 table:
 
 - Insert a new row with the `year`, `summary`, and `employee_id` values of the
-  current`Review` object.
+  current`Review` instance.
 - Update the object id attribute using the primary key value of new row.
-- Save the object in the local dictionary.
+- Save the object in local dictionary using table row's PK as dictionary key.
 
 ### `create()`
 
@@ -92,7 +92,8 @@ columns for a "reviews" table row based on the `id` of the current object.
 ### `delete()`
 
 This instance method should delete a "reviews" table row based on the `id` of
-the current object. It will also remove the instance from the `all` dictionary.
+the current object. It will also remove the instance from the `all` dictionary
+and set the current object's `id` attribute to `None`.
 
 ### `get_all()`
 
@@ -138,8 +139,8 @@ Update the `Employee` class with a new method `reviews()` for getting associated
 
 This instance method should query the "reviews" table to get all rows where the
 foreign key column `employee_id` matches the id of the current `Employee`
-instance. The method should return a list of `Review` objects for each matching
-table row.
+instance. The method should return a list of `Review` instances for each
+matching table row.
 
 NOTE: To avoid issues with circular imports, embed import the `Review` class
 within the `reviews()` method rather than at the module level.
