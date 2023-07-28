@@ -220,10 +220,12 @@ class TestReview:
         review1.delete()
         # assert row deleted
         assert (Review.find_by_id(id1) is None)
-        # assert Review object not modified
+        # assert Review object state is correct, id is None
         assert ((review1.id, review1.year, review1.summary, review1.employee_id) ==
-                (id1, 2020, "Usually double checks their work", employee.id))
-
+                (None, 2020, "Usually double checks their work", employee.id))
+        # assert dictionary entry was deleted
+        assert(Review.all.get(id1) is None)
+        
         review = Review.find_by_id(id2)
         # assert review2 row not modified, review2 object not modified
         assert ((review.id, review.year, review.summary, review.employee_id) ==

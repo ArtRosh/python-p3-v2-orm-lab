@@ -237,15 +237,18 @@ class TestEmployee:
         employee.delete()
         # assert row deleted
         assert (Employee.find_by_id(employee1.id) is None)
-        # assert Employee object not modified
+        # assert Employee object state is correct, id should be None
         assert ((employee1.id, employee1.name, employee1.job_title, employee1.department_id) ==
-                (id1, "Raha", "Accountant", department.id))
-
+                (None, "Raha", "Accountant", department.id))
+        # assert dictionary entry was deleted
+        assert(Employee.all.get(id1) is None)
+        
         employee = Employee.find_by_id(id2)
         # assert employee2 row not modified, employee2 object not modified
         assert ((employee.id, employee.name, employee.job_title, employee.department_id) ==
                 (employee2.id, employee2.name, employee2.job_title, employee2.department_id) ==
                 (id2, "Tal", "Benefits Coordinator", department.id))
+
 
 
     def test_gets_all(self):

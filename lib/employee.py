@@ -1,6 +1,6 @@
+# lib/employee.py
 from __init__ import CURSOR, CONN
 from department import Department
-
 
 class Employee:
 
@@ -18,13 +18,14 @@ class Employee:
             f"<Employee {self.id}: {self.name}, {self.job_title}, " +
             f"Department ID: {self.department_id}>"
         )
+
     @property
     def name(self):
         return self._name
 
     @name.setter
     def name(self, name):
-        if isinstance(name, str) and len(name) > 0:
+        if isinstance(name, str) and len(name):
             self._name = name
         else:
             raise ValueError(
@@ -37,7 +38,7 @@ class Employee:
 
     @job_title.setter
     def job_title(self, job_title):
-        if isinstance(job_title, str) and len(job_title) > 0:
+        if isinstance(job_title, str) and len(job_title):
             self._job_title = job_title
         else:
             raise ValueError(
@@ -102,11 +103,13 @@ class Employee:
             WHERE id = ?
         """
         CURSOR.execute(sql, (self.name, self.job_title,
-                            self.department_id, self.id))
+                             self.department_id, self.id))
         CONN.commit()
 
     def delete(self):
-        """Delete the row corresponding to the current Employee instance"""
+        """Delete the table row corresponding to the current Employee instance,
+        delete the dictionary entry, and reassign id attribute"""
+
         sql = """
             DELETE FROM employees
             WHERE id = ?
@@ -114,8 +117,12 @@ class Employee:
 
         CURSOR.execute(sql, (self.id,))
         CONN.commit()
-        # remove object from local dictionary
+
+        # Delete the dictionary entry using id as the key
         del type(self).all[self.id]
+
+        # Set the id to None
+        self.id = None
 
     @classmethod
     def create(cls, name, job_title, department_id):
@@ -135,8 +142,8 @@ class Employee:
             employee.name = row[1]
             employee.job_title = row[2]
             employee.department_id = row[3]
-        # not in dictionary, create new instance and add to dictionary
         else:
+            # not in dictionary, create new instance and add to dictionary
             employee = cls(row[1], row[2], row[3])
             employee.id = row[0]
             cls.all[employee.id] = employee
